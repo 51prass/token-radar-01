@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Radar — pre-token protocols ranked by implied value</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="dot" aria-hidden="true"></span><span class="brand-name">TOKEN RADAR</span></div>
+  <p class="tagline">Which protocol with no token yet is worth farming next — and what to do about it.</p>
+  <p class="meta" id="meta"></p>
+</header>
+<nav class="tabs" id="tabs">
+  <button data-view="board" class="active">Board</button>
+  <button data-view="live">Live tokens</button>
+  <button data-view="model">How the model works</button>
+</nav>
+<section class="controls" id="controls">
+  <input id="q" type="search" placeholder="Search a protocol…" aria-label="Search a protocol">
+  <select id="cat" aria-label="Filter by category"></select>
+  <select id="chain" aria-label="Filter by chain"></select>
+  <select id="sort" aria-label="Sort the board">
+    <option value="value">Sort: implied value</option>
+    <option value="tvl">Sort: TVL</option>
+    <option value="growth">Sort: 7-day growth</option>
+    <option value="age">Sort: age</option>
+  </select>
+</section>
+<main>
+  <section id="stats" class="stats" aria-label="Board summary"></section>
+  <section id="board-wrap">
+    <table id="board">
+      <thead><tr>
+        <th>#</th><th>Protocol</th><th>Category</th><th>Chains</th>
+        <th class="num">TVL</th><th class="num">7d</th><th class="num">Age</th>
+        <th class="num">Implied value</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p id="empty" class="empty" hidden>No protocol matches this filter.</p>
+  </section>
+  <section id="detail" class="detail" hidden></section>
+  <section id="live-wrap" hidden>
+    <h2>Live tokens — the market's own values</h2>
+    <p class="note">These protocols already trade. Their market caps are DefiLlama's figures, not this radar's model — they sit apart from the ranked board so a reader never mistakes a traded token for a launch still to come.</p>
+    <table id="live">
+      <thead><tr><th>Protocol</th><th>Category</th><th>Chains</th><th class="num">TVL</th><th class="num">Market cap</th><th class="num">7d</th></tr></thead>
+      <tbody id="live-rows"></tbody>
+    </table>
+  </section>
+  <section id="model-wrap" hidden>
+    <h2>How the model works</h2>
+    <p>Every implied value on this board comes from the snapshot's own figures. No protocol name is ever special-cased: the same formula scores every row.</p>
+    <p class="formula">implied value = TVL × size × category × growth × maturity × breadth</p>
+    <ul class="factors">
+      <li><b>size</b> — the TVL multiple, 0.32 at $50M of TVL sliding to 0.18 at $2B, log-interpolated. A bigger protocol is worth more in dollars, but each extra TVL dollar buys less of it.</li>
+      <li><b>category</b> — what the protocol does sets its revenue quality: exchanges and lending desks 1.10–1.15, bridges and wrappers 0.72–0.85, the rest in between.</li>
+      <li><b>growth</b> — 1 + the 7-day TVL change (clamped to −60%…+150%) × 0.7. Momentum lifts a protocol; shrinkage warns. A missing reading counts as flat.</li>
+      <li><b>maturity</b> — 0.7 + 0.3 × √(age ÷ 4 years). A protocol that has run for years with no token is a longer-standing launch candidate, with the curve flattening over time. Unknown age counts as one year.</li>
+      <li><b>breadth</b> — 1 + 0.04 per extra chain, up to five. A protocol live on several chains reaches more farmers.</li>
+    </ul>
+    <p class="note">A protocol on this board <b>records no token</b> in DefiLlama's data. That is not proof it has none: a token may exist that the record does not carry. Implied values are this radar's own claim, never a promise that a token will be issued or what it would trade at.</p>
+  </section>
+</main>
+<footer>
+  <p>Source: DefiLlama public protocol data, fetched <span id="asof"></span>. Snapshot as of <span id="asof2"></span> · Model <span id="modelv"></span> · The watchlist is the snapshot's own floor (TVL $50M and up, no token recorded); the board adds the strongest pre-token protocols below it.</p>
+</footer>
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
